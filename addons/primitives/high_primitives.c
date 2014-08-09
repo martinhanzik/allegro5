@@ -38,6 +38,10 @@
 
 
 #include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro.h"
+#include "allegro5/internal/aintern_bitmap.h"
+#include "allegro5/internal/aintern_display.h"
+#include "allegro5/internal/aintern_memblit.h"
 #ifdef ALLEGRO_CFG_OPENGL
 #include "allegro5/allegro_opengl.h"
 #endif
@@ -77,6 +81,9 @@ static float get_scale(void)
 void al_draw_line(float x1, float y1, float x2, float y2,
    ALLEGRO_COLOR color, float thickness)
 {
+  ALLEGRO_TRANSFORM t;
+  al_identity_transform(&t);
+  al_use_transform(&t);
    if (thickness > 0) {
       int ii;
       float tx, ty;
@@ -358,6 +365,9 @@ void al_draw_rectangle(float x1, float y1, float x2, float y2,
    ALLEGRO_COLOR color, float thickness)
 {
    int ii;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    if (thickness > 0) {
       float t = thickness / 2;
@@ -404,6 +414,9 @@ void al_draw_filled_rectangle(float x1, float y1, float x2, float y2,
 {
    ALLEGRO_VERTEX vtx[4];
    int ii;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    vtx[0].x = x1; vtx[0].y = y1;
    vtx[1].x = x1; vtx[1].y = y2;
@@ -414,7 +427,6 @@ void al_draw_filled_rectangle(float x1, float y1, float x2, float y2,
       vtx[ii].color = color;
       vtx[ii].z = 0;
    }
-   
    al_draw_prim(vtx, 0, 0, 0, 4, ALLEGRO_PRIM_TRIANGLE_FAN);
 }
 
@@ -507,6 +519,9 @@ void al_draw_pieslice(float cx, float cy, float r, float start_theta,
    LOCAL_VERTEX_CACHE;
    float scale = get_scale();
    int num_segments, ii;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
    
    ASSERT(r >= 0);
    
@@ -663,6 +678,9 @@ void al_draw_filled_pieslice(float cx, float cy, float r, float start_theta,
    LOCAL_VERTEX_CACHE;
    float scale = get_scale();
    int num_segments, ii;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
    
    ASSERT(r >= 0);
    
@@ -693,6 +711,9 @@ void al_draw_ellipse(float cx, float cy, float rx, float ry,
 {
    LOCAL_VERTEX_CACHE;
    float scale = get_scale();
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    ASSERT(rx >= 0);
    ASSERT(ry >= 0);
@@ -746,6 +767,9 @@ void al_draw_filled_ellipse(float cx, float cy, float rx, float ry,
    LOCAL_VERTEX_CACHE;
    int num_segments, ii;
    float scale = get_scale();
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    ASSERT(rx >= 0);
    ASSERT(ry >= 0);
@@ -795,6 +819,9 @@ void al_draw_elliptical_arc(float cx, float cy, float rx, float ry, float start_
 {
    LOCAL_VERTEX_CACHE;
    float scale = get_scale();
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    ASSERT(rx >= 0 && ry >= 0);
    if (thickness > 0) {
@@ -853,6 +880,9 @@ void al_draw_rounded_rectangle(float x1, float y1, float x2, float y2,
 {
    LOCAL_VERTEX_CACHE;
    float scale = get_scale();
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    ASSERT(rx >= 0);
    ASSERT(ry >= 0);
@@ -953,6 +983,9 @@ void al_draw_filled_rounded_rectangle(float x1, float y1, float x2, float y2,
    int ii;
    float scale = get_scale();
    int num_segments = ALLEGRO_PRIM_QUALITY * scale * sqrtf((rx + ry) / 2.0f) / 4;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    ASSERT(rx >= 0);
    ASSERT(ry >= 0);
@@ -1085,6 +1118,9 @@ void al_draw_spline(float points[8], ALLEGRO_COLOR color, float thickness)
                                   hypotf(points[6] - points[4], points[7] - points[5])) *
                             1.2 * ALLEGRO_PRIM_QUALITY * scale / 10);
    LOCAL_VERTEX_CACHE;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
    
    if(num_segments < 2)
       num_segments = 2;
@@ -1247,6 +1283,9 @@ void al_draw_ribbon(const float *points, int points_stride, ALLEGRO_COLOR color,
 {
    LOCAL_VERTEX_CACHE;
    int ii;
+   ALLEGRO_TRANSFORM t;
+   al_identity_transform(&t);
+   al_use_transform(&t);
 
    al_calculate_ribbon(&(vertex_cache[0].x), sizeof(ALLEGRO_VERTEX), points, points_stride, thickness, num_segments);
    

@@ -282,6 +282,93 @@ static void draw_quad(ALLEGRO_BITMAP *bitmap,
    if (!disp->cache_enabled)
       disp->vt->flush_vertex_cache(disp);
 }
+
+static void draw_quad_optimised(ALLEGRO_BITMAP *bitmap,
+                                ALLEGRO_COLOR tint,
+                                float sx, float sy, float sw, float sh,
+                                int flags)
+{
+  float tex_l, tex_t, tex_r, tex_b, w, h, true_w, true_h;
+  float dw = sw, dh = sh;
+  ALLEGRO_BITMAP_EXTRA_OPENGL *ogl_bitmap = bitmap->extra;
+  ALLEGRO_OGL_BITMAP_VERTEX *verts;
+  ALLEGRO_DISPLAY *disp = al_get_current_display();
+
+  (void)flags;
+
+  if (disp->num_cache_vertices != 0 && ogl_bitmap->texture != disp->cache_texture)
+    disp->vt->flush_vertex_cache(disp);
+
+  disp->cache_texture = ogl_bitmap->texture;
+
+  verts = disp->vt->prepare_vertex_cache(disp, 6);
+
+  tex_l = ogl_bitmap->left;
+  tex_r = ogl_bitmap->right;
+  tex_t = ogl_bitmap->top;
+  tex_b = ogl_bitmap->bottom;
+
+  w = bitmap->w;
+  h = bitmap->h;
+  true_w = ogl_bitmap->true_w;
+  true_h = ogl_bitmap->true_h;
+
+  tex_l += sx / true_w;
+  tex_t -= sy / true_h;
+  tex_r -= (w - sx - sw) / true_w;
+  tex_b += (h - sy - sh) / true_h;
+
+  verts[0].x = 0;
+  verts[0].y = dh;
+  verts[0].tx = tex_l;
+  verts[0].ty = tex_b;
+  verts[0].r = tint.r;
+  verts[0].g = tint.g;
+  verts[0].b = tint.b;
+  verts[0].a = tint.a;
+
+  verts[1].x = 0;
+  verts[1].y = 0;
+  verts[1].tx = tex_l;
+  verts[1].ty = tex_t;
+  verts[1].r = tint.r;
+  verts[1].g = tint.g;
+  verts[1].b = tint.b;
+  verts[1].a = tint.a;
+
+  verts[2].x = dw;
+  verts[2].y = dh;
+  verts[2].tx = tex_r;
+  verts[2].ty = tex_b;
+  verts[2].r = tint.r;
+  verts[2].g = tint.g;
+  verts[2].b = tint.b;
+  verts[2].a = tint.a;
+
+  verts[4].x = dw;
+  verts[4].y = 0;
+  verts[4].tx = tex_r;
+  verts[4].ty = tex_t;
+  verts[4].r = tint.r;
+  verts[4].g = tint.g;
+  verts[4].b = tint.b;
+  verts[4].a = tint.a;
+
+  if (disp->cache_enabled)
+  {
+    const ALLEGRO_TRANSFORM* transform = &current_transform_optimised;
+    /* If drawing is batched, we apply transformations manually. */
+    al_transform_coordinates(transform, &verts[0].x, &verts[0].y);
+    al_transform_coordinates(transform, &verts[1].x, &verts[1].y);
+    al_transform_coordinates(transform, &verts[2].x, &verts[2].y);
+    al_transform_coordinates(transform, &verts[4].x, &verts[4].y);
+  }
+  verts[3] = verts[1];
+  verts[5] = verts[2];
+
+  if (!disp->cache_enabled)
+    disp->vt->flush_vertex_cache(disp);
+}
 #undef SWAP
 
 
@@ -366,6 +453,38 @@ static void ogl_draw_bitmap_region(ALLEGRO_BITMAP *bitmap,
    if (disp->ogl_extras->opengl_target == target) {
       if (_al_opengl_set_blender(disp)) {
          draw_quad(bitmap, tint, sx, sy, sw, sh, flags);
+         return;
+      }
+   }
+
+   /* If all else fails, fall back to software implementation. */
+   _al_draw_bitmap_region_memory(bitmap, tint, sx, sy, sw, sh, 0, 0, flags);
+}
+
+static void ogl_draw_bitmap_region_optimised(ALLEGRO_BITMAP *bitmap,
+   ALLEGRO_COLOR tint, float sx, float sy,
+   float sw, float sh, int flags)
+{
+   // FIXME: hack
+   // FIXME: need format conversion if they don't match
+   ALLEGRO_BITMAP *target = al_get_target_bitmap();
+   ALLEGRO_BITMAP_EXTRA_OPENGL *ogl_target;
+   ALLEGRO_DISPLAY *disp = target->display;
+
+   /* For sub-bitmaps */
+   if (target->parent) {
+      target = target->parent;
+   }
+
+   ogl_target = target->extra;
+
+   if (!(bitmap->flags & ALLEGRO_MEMORY_BITMAP) && !bitmap->locked &&
+         !target->locked) {
+      ALLEGRO_BITMAP_EXTRA_OPENGL *ogl_source = bitmap->extra;
+   }
+   if (disp->ogl_extras->opengl_target == target) {
+      if (_al_opengl_set_blender(disp)) {
+         draw_quad_optimised(bitmap, tint, sx, sy, sw, sh, flags);
          return;
       }
    }
@@ -944,6 +1063,7 @@ static ALLEGRO_BITMAP_INTERFACE *ogl_bitmap_driver(void)
    }
 
    glbmp_vt.draw_bitmap_region = ogl_draw_bitmap_region;
+   glbmp_vt.draw_bitmap_region_optimised = ogl_draw_bitmap_region_optimised;
    glbmp_vt.upload_bitmap = ogl_upload_bitmap;
    glbmp_vt.update_clipping_rectangle = ogl_update_clipping_rectangle;
    glbmp_vt.destroy_bitmap = ogl_destroy_bitmap;

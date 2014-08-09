@@ -57,6 +57,7 @@ struct ALLEGRO_STATE
 
 AL_FUNC(void, al_store_state, (ALLEGRO_STATE *state, int flags));
 AL_FUNC(void, al_restore_state, (ALLEGRO_STATE const *state));
+extern ALLEGRO_BITMAP* target_bitmap_optimised;
 
 
 #ifdef __cplusplus

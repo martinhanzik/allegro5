@@ -34,7 +34,6 @@ AL_FUNC(void, al_draw_tinted_scaled_rotated_bitmap_region, (
    float cx, float cy, float dx, float dy, float xscale, float yscale,
    float angle, int flags));
 
-
 #ifdef __cplusplus
    }
 #endif

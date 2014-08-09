@@ -22,6 +22,7 @@
 #include "allegro5/internal/aintern_system.h"
 #include "allegro5/internal/aintern_transform.h"
 #include <math.h>
+ALLEGRO_TRANSFORM current_transform_optimised;
 
 /* ALLEGRO_DEBUG_CHANNEL("transformations") */
 

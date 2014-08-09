@@ -101,7 +101,7 @@ static void *file_stdio_fopen(const char *path, const char *mode)
    FILE *fp;
    USERDATA *userdata;
 
-#ifdef ALLEGRO_WINDOWS
+#if 0
    {
       wchar_t *wpath = _al_win_utf16(path);
       wchar_t *wmode = _al_win_utf16(mode);

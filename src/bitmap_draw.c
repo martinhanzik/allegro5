@@ -65,14 +65,14 @@ static void _draw_tinted_rotated_scaled_bitmap_region(ALLEGRO_BITMAP *bitmap,
    float sx, float sy, float sw, float sh, float dx, float dy,
    int flags)
 {
-   ALLEGRO_TRANSFORM backup;
+   //ALLEGRO_TRANSFORM backup;
    ALLEGRO_TRANSFORM t;
    ALLEGRO_BITMAP *parent = bitmap;
    float const orig_sw = sw;
    float const orig_sh = sh;
    ASSERT(bitmap);
 
-   al_copy_transform(&backup, al_get_current_transform());
+   //al_copy_transform(&backup, al_get_current_transform());
    al_identity_transform(&t);
    
    if (bitmap->parent) {
@@ -112,13 +112,12 @@ static void _draw_tinted_rotated_scaled_bitmap_region(ALLEGRO_BITMAP *bitmap,
    al_scale_transform(&t, xscale, yscale);
    al_rotate_transform(&t, angle);
    al_translate_transform(&t, dx, dy);
-   al_compose_transform(&t, &backup);
+   //al_compose_transform(&t, &backup);
 
    al_use_transform(&t);
    _bitmap_drawer(parent, tint, sx, sy, sw, sh, flags);
-   al_use_transform(&backup);
+   //al_use_transform(&backup);
 }
-
 
 /* Function: al_draw_tinted_bitmap_region
  */

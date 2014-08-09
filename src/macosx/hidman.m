@@ -372,8 +372,8 @@ HID_DEVICE_COLLECTION *_al_osx_hid_scan(int type, HID_DEVICE_COLLECTION* col)
 			/* Add key for device type to refine the matching dictionary. */
 			usage_ref = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage);
 			usage_page_ref = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage_page);
-			CFDictionarySetValue(class_dictionary, CFSTR(kIOHIDPrimaryUsageKey), usage_ref);
-			CFDictionarySetValue(class_dictionary, CFSTR(kIOHIDPrimaryUsagePageKey), usage_page_ref);
+			CFDictionarySetValue(class_dictionary, CFSTR(kIOHIDDeviceUsageKey), usage_ref);
+			CFDictionarySetValue(class_dictionary, CFSTR(kIOHIDDeviceUsagePageKey), usage_page_ref);
 		}
 		result = IOServiceGetMatchingServices(master_port, class_dictionary, &hid_object_iterator);
 		if ((result == kIOReturnSuccess) && (hid_object_iterator)) {

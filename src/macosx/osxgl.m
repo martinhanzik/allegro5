@@ -30,6 +30,9 @@
 #error something is wrong with the makefile
 #endif
 
+// it won't work on Lion but what can we do
+#define NSWindowCollectionBehaviorFullScreenPrimary (1<<7)
+
 #import <Cocoa/Cocoa.h>
 #import <OpenGL/OpenGL.h>
 

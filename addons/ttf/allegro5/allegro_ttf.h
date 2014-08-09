@@ -11,6 +11,7 @@
 #define ALLEGRO_TTF_NO_KERNING  1
 #define ALLEGRO_TTF_MONOCHROME  2
 #define ALLEGRO_TTF_NO_AUTOHINT 4
+#define ALLEGRO_TTF_RENDER_BORDER 8
 
 #if (defined ALLEGRO_MINGW32) || (defined ALLEGRO_MSVC) || (defined ALLEGRO_BCC32)
    #ifndef ALLEGRO_STATICLINK
@@ -41,6 +42,9 @@ ALLEGRO_TTF_FUNC(ALLEGRO_FONT *, al_load_ttf_font_stretch_f, (ALLEGRO_FILE *file
 ALLEGRO_TTF_FUNC(bool, al_init_ttf_addon, (void));
 ALLEGRO_TTF_FUNC(void, al_shutdown_ttf_addon, (void));
 ALLEGRO_TTF_FUNC(uint32_t, al_get_allegro_ttf_version, (void));
+ALLEGRO_TTF_FUNC(void, al_set_ttf_border_color, (ALLEGRO_FONT *font, ALLEGRO_COLOR color));
+ALLEGRO_TTF_FUNC(void, al_set_ttf_border_width, (ALLEGRO_FONT *font, float width));
+ALLEGRO_TTF_FUNC(void, al_set_ttf_border, (ALLEGRO_FONT *font, float width, ALLEGRO_COLOR color));
 
 #ifdef __cplusplus
    }

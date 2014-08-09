@@ -44,6 +44,7 @@
 #include "allegro5/internal/aintern_fshook.h"
 #include "allegro5/internal/aintern_shader.h"
 #include "allegro5/internal/aintern_tls.h"
+ALLEGRO_BITMAP* target_bitmap_optimised;
 
 #ifdef ALLEGRO_ANDROID
 #include "allegro5/internal/aintern_android.h"
@@ -434,6 +435,7 @@ void al_set_target_bitmap(ALLEGRO_BITMAP *bitmap)
 
       new_display->vt->update_transformation(new_display, bitmap);
    }
+   target_bitmap_optimised = bitmap;
 }
 
 
