@@ -106,6 +106,12 @@ struct ALLEGRO_BITMAP_INTERFACE
    void (*draw_bitmap_region)(ALLEGRO_BITMAP *bitmap,
       ALLEGRO_COLOR tint,float sx, float sy,
       float sw, float sh, int flags);
+      
+    void (*draw_bitmap_region_optimised)(ALLEGRO_BITMAP *bitmap,
+      ALLEGRO_COLOR tint,float sx, float sy,
+      float sw, float sh, int flags);
+      
+    void(*apply_blender)();
 
    /* After the memory-copy of the bitmap has been modified, need to call this
     * to update the display-specific copy. E.g. with an OpenGL driver, this
