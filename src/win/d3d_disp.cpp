@@ -2064,7 +2064,18 @@ static void d3d_flip_display(ALLEGRO_DISPLAY *al_display)
       return;
    }
    else {
-      _al_d3d_prepare_bitmaps_for_reset(d3d_display);
+      //_al_d3d_prepare_bitmaps_for_reset(d3d_display);
+
+      // This (commenting out the method) is our custom solution of the performance problem of this method when
+      // there are tens of thousands of sprites.
+
+      // In our case, vast majority of the sprites are either sub-bitmaps or bitmaps
+      // marked with NO_PRESEVE flag, so the loop wastefully goes through all of the bitmaps
+      // just to check, that none of these need to be updated.
+
+      // The proper solution would have to have special list of bitmaps that are relevant for the
+      // reset (no subbitmaps, preserved), and check only those.
+
    }
 }
 
